@@ -1,38 +1,73 @@
-﻿@using Expendio.Models
-@model Expendio.ViewModel.HistoryViewModel;
+﻿@model Expendio.ViewModel.HistoryViewModel;
 
-@{
-    ViewData["Title"] = "History";
-}
+<div class="container mt-4">
+    <h1 class="mb-4">Financial History</h1>
 
-<h1>
-    <h2>Income</h2>
-    @{
-        if (Model.Incomes==null)
-        {
-            <h3>No Income</h3>
-        }
-        else
-        {
-            foreach (Income income in Model.Incomes)
-            {
-                <p>@income.Amount,@income.Source</p>
-            }
-        }      
-    }
-    <h2>Expense</h2>
-    @{
-        if (Model.Expenses == null)
-        {
-            <h3>No Expense</h3>
-        }
-        else
-        {
-            foreach (Expense expense in Model.Expenses)
-            {
-                <p>@expense.Amount,@expense.Category</p>
-            }
-        }
-    }
-</h1>
+    <div class="row">
+        <!-- Expenses Section -->
+        <div class="col-md-6">
+            <h2>Expenses</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Expenses != null && Model.Expenses.Any())
+                    {
+                        foreach (var expense in Model.Expenses)
+                        {
+                            <tr>
+                                <td>@expense.Category</td>
+                                <td>@expense.Amount.ToString("C")</td>
+                                <td>@expense.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No expenses available.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
+        <!-- Incomes Section -->
+        <div class="col-md-6">
+            <h2>Incomes</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Incomes != null && Model.Incomes.Any())
+                    {
+                        foreach (var income in Model.Incomes)
+                        {
+                            <tr>
+                                <td>@income.Source</td>
+                                <td>@income.Amount.ToString("C")</td>
+                                <td>@income.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No incomes available.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

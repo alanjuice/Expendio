@@ -1,7 +1,6 @@
 ﻿using Expendio.Data;
 using Expendio.DTO;
 using Expendio.Mappers;
-using Expendio.Models;
 using Expendio.Services;
 using Expendio.ViewModel;
 using Microsoft.AspNetCore.Authentication;
@@ -129,8 +128,16 @@ namespace Expendio.Controllers
             var Id = Convert.ToInt32(idClaim);
 
 
-            var expenses = _context.Expenses.Where(expense => expense.UserId == Id).ToList<Expense>();
-            var incomes = _context.Incomes.Where(income => income.UserId == Id).ToList<Income>();
+            var expenses = _context.Expenses
+                .Where(expense => expense.UserId == Id)
+                .OrderBy(expense => expense.Date)
+                .ToList();
+
+            var incomes = _context.Incomes
+                .Where(income => income.UserId == Id)
+                .OrderBy(income => income.Date)
+                .ToList();
+
 
             var history = new HistoryViewModel { Expenses = expenses, Incomes = incomes };
             return View(history);
