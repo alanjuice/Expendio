@@ -3,6 +3,7 @@ using System;
 using Expendio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Expendio.Migrations
 {
     [DbContext(typeof(ExpendioDbContext))]
-    partial class ExpendioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240711133526_dateAdded")]
+    partial class dateAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,14 +37,13 @@ namespace Expendio.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
+
+                    b.Property<DateOnly>("date")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -61,15 +63,14 @@ namespace Expendio.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
                     b.Property<string>("Source")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
+
+                    b.Property<DateOnly>("date")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -87,15 +88,12 @@ namespace Expendio.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
