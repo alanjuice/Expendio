@@ -9,6 +9,10 @@ namespace Expendio.Controllers
     {
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "User");
+            }
             return View();
         }
 
