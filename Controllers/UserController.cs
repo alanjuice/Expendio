@@ -23,16 +23,19 @@ namespace Expendio.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+            var Id = Convert.ToInt32(idClaim);
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-            var dayexpense=await _expenseRepository.GetExpenseByDate(today);
-            var dayincome = await _expenseRepository.GetIncomeByDate(today);
+            var dayexpense=await _expenseRepository.GetExpenseByDate(today,Id);
+            var dayincome = await _expenseRepository.GetIncomeByDate(today, Id);
 
-            var monthexpense = await _expenseRepository.GetExpenseByMonth(today.Year,today.Month);
-            var monthincome = await _expenseRepository.GetIncomeByMonth(today.Year, today.Month);
+            var monthexpense = await _expenseRepository.GetExpenseByMonth(today.Year,today.Month, Id);
+            var monthincome = await _expenseRepository.GetIncomeByMonth(today.Year, today.Month, Id);
 
-            var yearexpense = await _expenseRepository.GetExpenseByYear(today.Year);
-            var yearincome = await _expenseRepository.GetIncomeByYear(today.Year);
+            var yearexpense = await _expenseRepository.GetExpenseByYear(today.Year, Id);
+            var yearincome = await _expenseRepository.GetIncomeByYear(today.Year, Id);
 
             var viewModel = new IndexViewModel()
             {

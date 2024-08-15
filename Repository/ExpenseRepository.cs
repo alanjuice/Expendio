@@ -12,39 +12,39 @@ namespace Expendio.Services
             _context = context;
         }
 
-        public async Task<IList<Expense>> GetExpenseByDate(DateOnly date)
+        public async Task<IList<Expense>> GetExpenseByDate(DateOnly date, int Id)
         {
-            var data = await _context.Expenses.Where(e => e.Date == date).ToListAsync();
+            var data = await _context.Expenses.Where(e => e.Date == date && e.UserId==Id).ToListAsync();
             return data;
         }
 
-        public async Task<IList<Income>> GetIncomeByDate(DateOnly date)
+        public async Task<IList<Income>> GetIncomeByDate(DateOnly date, int Id)
         {
-            var data = await _context.Incomes.Where(e => e.Date == date).ToListAsync();
+            var data = await _context.Incomes.Where(e => e.Date == date && e.UserId == Id).ToListAsync();
             return data;
         }
 
-        public async Task<IList<Income>> GetIncomeByMonth(int year, int month)
+        public async Task<IList<Income>> GetIncomeByMonth(int year, int month, int Id)
         {
-            var data = await _context.Incomes.Where(e => e.Date.Year == year && e.Date.Month == month).ToListAsync();
+            var data = await _context.Incomes.Where(e => e.Date.Year == year && e.Date.Month == month && e.UserId == Id).ToListAsync();
             return data;
         }
 
-        public async Task<IList<Expense>> GetExpenseByMonth(int year, int month)
+        public async Task<IList<Expense>> GetExpenseByMonth(int year, int month, int Id)
         {
-            var data = await _context.Expenses.Where(e => e.Date.Year==year && e.Date.Month==month).ToListAsync();
+            var data = await _context.Expenses.Where(e => e.Date.Year==year && e.Date.Month==month && e.UserId == Id).ToListAsync();
             return data;
         }
 
-        public async Task<IList<Expense>> GetExpenseByYear(int year)
+        public async Task<IList<Expense>> GetExpenseByYear(int year, int Id)
         {
-            var data = await _context.Expenses.Where(e => e.Date.Year == year).ToListAsync();
+            var data = await _context.Expenses.Where(e => e.Date.Year == year && e.UserId == Id).ToListAsync();
             return data;
         }
 
-        public async Task<IList<Income>> GetIncomeByYear(int year)
+        public async Task<IList<Income>> GetIncomeByYear(int year, int Id)
         {
-            var data = await _context.Incomes.Where(e => e.Date.Year == year).ToListAsync();
+            var data = await _context.Incomes.Where(e => e.Date.Year == year && e.UserId == Id).ToListAsync();
             return data;
         }
     }
