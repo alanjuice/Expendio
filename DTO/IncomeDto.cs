@@ -2,7 +2,7 @@
 
 namespace Expendio.DTO
 {
-    public class AddIncomeDto
+    public class IncomeDto
     {
         public string Source { get; set; } = string.Empty;
         public int Amount { get; set; }

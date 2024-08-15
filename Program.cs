@@ -1,4 +1,5 @@
 using Expendio.Data;
+using Expendio.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddLogging(builder=>builder.AddConsole());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ExpendioDbContext>(options=>options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
 builder.Services.AddAuthentication().AddCookie(options => {
     options.Cookie.Name = "AuthCookie";
