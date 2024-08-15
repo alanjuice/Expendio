@@ -1,7 +1,208 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@model Expendio.ViewModel.IndexViewModel
 
-<h1>Stats</h1>
 
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div class="mb-3">
+            <a asp-action="Add" asp-controller="User" class="btn btn-primary">Add Data</a>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Daily Expenses</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DayExpenses != null && Model.DayExpenses.Any())
+                    {
+                        foreach (var expense in Model.DayExpenses)
+                        {
+                            <tr>
+                                <td>@expense.Category</td>
+                                <td>@expense.Amount.ToString("C")</td>
+                                <td>@expense.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No expenses available for today.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Daily Incomes</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DayIncomes != null && Model.DayIncomes.Any())
+                    {
+                        foreach (var income in Model.DayIncomes)
+                        {
+                            <tr>
+                                <td>@income.Source</td>
+                                <td>@income.Amount.ToString("C")</td>
+                                <td>@income.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No incomes available for today.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2>Monthly Expenses</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.MonthExpenses != null && Model.MonthExpenses.Any())
+                    {
+                        foreach (var expense in Model.MonthExpenses)
+                        {
+                            <tr>
+                                <td>@expense.Category</td>
+                                <td>@expense.Amount.ToString("C")</td>
+                                <td>@expense.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No expenses available for this month.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Monthly Incomes</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.MonthIncomes != null && Model.MonthIncomes.Any())
+                    {
+                        foreach (var income in Model.MonthIncomes)
+                        {
+                            <tr>
+                                <td>@income.Source</td>
+                                <td>@income.Amount.ToString("C")</td>
+                                <td>@income.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No incomes available for this month.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2>Yearly Expenses</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.YearExpenses != null && Model.YearExpenses.Any())
+                    {
+                        foreach (var expense in Model.YearExpenses)
+                        {
+                            <tr>
+                                <td>@expense.Category</td>
+                                <td>@expense.Amount.ToString("C")</td>
+                                <td>@expense.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No expenses available for this year.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Yearly Incomes</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.YearIncomes != null && Model.YearIncomes.Any())
+                    {
+                        foreach (var income in Model.YearIncomes)
+                        {
+                            <tr>
+                                <td>@income.Source</td>
+                                <td>@income.Amount.ToString("C")</td>
+                                <td>@income.Date.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No incomes available for this year.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

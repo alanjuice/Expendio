@@ -2,28 +2,54 @@
 using Expendio.DTO;
 using Expendio.Mappers;
 using Expendio.Models;
+using Expendio.Services;
 using Expendio.ViewModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Security.Claims;
 
 namespace Expendio.Controllers
 {
     public class UserController : Controller
     {
         private readonly ExpendioDbContext _context;
-        private readonly IHttpContextAccessor _Accessor;
-        public UserController(ExpendioDbContext context, IHttpContextAccessor accessor)
+        private readonly IExpenseRepository _expenseRepository;
+        public UserController(ExpendioDbContext context,IExpenseRepository expenseRepository)
         {
             _context = context;
-            _Accessor = accessor;
+            _expenseRepository = expenseRepository;
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            var dayexpense=await _expenseRepository.GetExpenseByDate(today);
+            var dayincome = await _expenseRepository.GetIncomeByDate(today);
+
+            var monthexpense = await _expenseRepository.GetExpenseByMonth(today.Year,today.Month);
+            var monthincome = await _expenseRepository.GetIncomeByMonth(today.Year, today.Month);
+
+            var yearexpense = await _expenseRepository.GetExpenseByYear(today.Year);
+            var yearincome = await _expenseRepository.GetIncomeByYear(today.Year);
+
+            var viewModel = new IndexViewModel()
+            {
+                DayExpenses = dayexpense,
+                DayIncomes = dayincome,
+                MonthExpenses = monthexpense,
+                MonthIncomes = monthincome,
+                YearIncomes = yearincome,
+                YearExpenses = yearexpense,
+            };
+
+            return View(viewModel);
+
+            //Current day expenses/incomes
+            //Current week/incomes
+            //Current month
+            //Current year
         }
 
         [Authorize]
@@ -39,8 +65,16 @@ namespace Expendio.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index","Home");
+        }
+
+
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddIncome(int id, AddIncomeDto incomeDto)
+        public async Task<IActionResult> AddIncome(int id, IncomeDto incomeDto)
         {
             var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
             var Id = Convert.ToInt32(idClaim);
@@ -63,7 +97,7 @@ namespace Expendio.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AddExpense(AddExpenseDto expenseDto)
+        public async Task<IActionResult> AddExpense(ExpenseDto expenseDto)
         {
             var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
             var Id = Convert.ToInt32(idClaim);
@@ -92,8 +126,8 @@ namespace Expendio.Controllers
             var Id = Convert.ToInt32(idClaim);
 
 
-            var expenses = _context.Expenses.Where(expense => expense.Id == Id).ToList<Expense>();
-            var incomes = _context.Incomes.Where(income => income.Id == Id).ToList<Income>();
+            var expenses = _context.Expenses.Where(expense => expense.UserId == Id).ToList<Expense>();
+            var incomes = _context.Incomes.Where(income => income.UserId == Id).ToList<Income>();
 
             var history = new HistoryViewModel { Expenses = expenses, Incomes = incomes };
             return View(history);
