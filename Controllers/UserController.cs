@@ -23,9 +23,6 @@ namespace Expendio.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
-            var Id = Convert.ToInt32(idClaim);
-            
             return View();
         }
 
