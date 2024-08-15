@@ -5,7 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddLogging(builder=>builder.AddConsole());
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ExpendioDbContext>(options=>options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddAuthentication().AddCookie(options => {
+    options.Cookie.Name = "AuthCookie";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,7 +27,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
