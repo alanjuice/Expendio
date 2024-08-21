@@ -60,6 +60,40 @@ namespace Expendio.Controllers
             return View();
         }
 
+        public JsonResult ChartDataYear()
+        {
+            int year = DateTime.Now.Year;
+
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+            var Id = Convert.ToInt32(idClaim);
+
+            var totalExpensesByMonth = _context.Expenses
+                .Where(p => p.Date.Year == year)
+                .GroupBy(p => p.Date.Month)
+            .Select(g => new {
+                 Month = g.Key,
+                  Total = g.Sum(p => p.Amount) 
+                 })
+                .ToList();
+
+            var totalIncomesByMonth = _context.Incomes
+                .Where(p => p.Date.Year == year) 
+                .GroupBy(p => p.Date.Month) 
+            .Select(g => new {
+                Month = g.Key,
+                Total = g.Sum(p => p.Amount) 
+            })
+                .ToList();
+
+            var TotalData = new
+            {
+                Expenses = totalExpensesByMonth,
+                Incomes = totalIncomesByMonth
+            };
+
+            return Json(TotalData);
+        }
+
         [Authorize]
         public IActionResult Add()
         {

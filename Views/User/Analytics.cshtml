@@ -1,7 +1,110 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Analytics";
 }
 
-<h1>Analytics</h1>
+<div class="container">
+    <h3 class="text-left my-4">This Year...</h3>
+    <div class="row justify-content-left">
+        <div class="col-md-10 col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="chart1" class="w-100" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: "/User/ChartDataYear",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+
+                const monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+
+                const expenseMap = {};
+                data.expenses.forEach(entry => {
+                    expenseMap[entry.month] = entry.total;
+                });
+
+                const incomeMap = {};
+                data.incomes.forEach(entry => {
+                    incomeMap[entry.month] = entry.total;
+                });
+
+                const months = Array.from(new Set([...data.expenses.map(e => e.month), ...data.incomes.map(i => i.month)])).sort((a, b) => a - b);
+
+                const monthLabels = months.map(month => monthNames[month - 1])
+                const expensesData = months.map(month => expenseMap[month] || 0);
+                const incomesData = months.map(month => incomeMap[month] || 0);
+
+                new Chart(
+                    $("#chart1"),
+                    {
+                        type: 'bar',
+                        data: {
+                            labels: monthLabels, 
+                            datasets: [
+                                {
+                                    label: 'Expenses',
+                                    data: expensesData,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Incomes',
+                                    data: incomesData,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                    ticks: {
+                                        autoSkip: true,
+                                        maxTicksLimit: 12 
+                                    }
+                                },
+                                y: {
+                                    stacked: true,
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    }
+                );
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX call failed:', status, error);
+            }
+        });
+    });
+</script>
