@@ -9,8 +9,11 @@
             <div class="card">
                 <div class="card-body">
                     <canvas id="chart1" class="w-100" style="height: 300px;"></canvas>
+                    
                 </div>
+               
             </div>
+            <h4 class="text-left my-4" id="error-message" style="color:red"></h4>
         </div>
     </div>
 </div>
@@ -26,6 +29,14 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
+                console.log(data)
+                if (data.expenses.length==0 && data.incomes.length==0)
+                {
+                    $('#error-message').text("No data available");
+                    $('#chart1').hide();
+                    return 0;
+                }
+                    
 
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',

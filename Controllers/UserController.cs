@@ -68,6 +68,7 @@ namespace Expendio.Controllers
             var Id = Convert.ToInt32(idClaim);
 
             var totalExpensesByMonth = _context.Expenses
+                .Where(p=> p.UserId == Id)
                 .Where(p => p.Date.Year == year)
                 .GroupBy(p => p.Date.Month)
             .Select(g => new {
@@ -77,7 +78,8 @@ namespace Expendio.Controllers
                 .ToList();
 
             var totalIncomesByMonth = _context.Incomes
-                .Where(p => p.Date.Year == year) 
+                .Where(p => p.Date.Year == year).
+                Where(p => p.UserId == Id)
                 .GroupBy(p => p.Date.Month) 
             .Select(g => new {
                 Month = g.Key,
