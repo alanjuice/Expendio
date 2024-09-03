@@ -36,11 +36,11 @@ namespace Expendio.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUpUser(SignupUserDto signupUser)
+        public async Task<IActionResult> SignUp(SignupUserDto signupUser)
         {
             if (!ModelState.IsValid)
             {
-                return NotFound();
+                return View(signupUser);
             }
             var user = signupUser.ToUser();
             try

@@ -11,18 +11,21 @@
                     <h2>Signup</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post" asp-controller="Account" asp-action="SignupUser">
+                    <form method="post" asp-controller="Account" asp-action="SignUp">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" asp-for=Email required>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name" asp-for=Name required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" id="password" name="password" asp-for=Password required>
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Create An Account</button>
                     </form>
