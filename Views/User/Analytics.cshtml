@@ -2,21 +2,42 @@
     ViewData["Title"] = "Analytics";
 }
 
+<style>
+    .chart-wrapper {
+        height: 312px;
+        width: 312px;
+    }
+
+</style>
+
+
 <div class="container">
-    <h3 class="text-left my-4">This Year...</h3>
+    <h3 class="text-left my-4">Expenses vs Incomes This Year...</h3>
     <div class="row justify-content-left">
         <div class="col-md-10 col-lg-8">
             <div class="card">
                 <div class="card-body">
                     <canvas id="chart1" class="w-100" style="height: 300px;"></canvas>
-                    
                 </div>
-               
             </div>
             <h4 class="text-left my-4" id="error-message" style="color:red"></h4>
         </div>
+        <br /><br /><br />
+        <div class="d-flex p-2 flex-row justify-content-around chart-contain">
+            <div class="chart-wrapper">
+                <h2>Income Sources</h2>
+                <br />
+                <canvas id="incomePieChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Expense Categories</h2>
+                <br />
+                <canvas id="expensePieChart" width="10" height="10"></canvas>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -24,19 +45,60 @@
 <script>
     $(document).ready(function () {
         $.ajax({
+            url: '/User/ChartDataYearCategory',
+            method: 'GET',
+            success: function (data) {
+                console.log(data);
+                var incomeSources = data.incomes.map(item => item.source);
+                var incomeTotals = data.incomes.map(item => item.total);
+                var expenseCategories = data.expenses.map(item => item.category);
+                var expenseTotals = data.expenses.map(item => item.total);
+
+                var ctxIncome = document.getElementById('incomePieChart').getContext('2d');
+                new Chart(ctxIncome, {
+                    type: 'pie',
+                    data: {
+                        labels: incomeSources,
+                        datasets: [{
+                            data: incomeTotals,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+                        }]
+                    },
+                    options: {
+                            responsive: true,
+                        }
+                });
+
+                var ctxExpense = document.getElementById('expensePieChart').getContext('2d');
+                new Chart(ctxExpense, {
+                    type: 'pie',
+                    data: {
+                        labels: expenseCategories,
+                        datasets: [{
+                            data: expenseTotals,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                    }
+                   
+                });
+            }
+        });
+
+        $.ajax({
             type: "POST",
             url: "/User/ChartDataYear",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                console.log(data)
-                if (data.expenses.length==0 && data.incomes.length==0)
-                {
+                console.log(data);
+                if (data.expenses.length === 0 && data.incomes.length === 0) {
                     $('#error-message').text("No data available");
                     $('#chart1').hide();
-                    return 0;
+                    return;
                 }
-                    
 
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
@@ -55,7 +117,7 @@
 
                 const months = Array.from(new Set([...data.expenses.map(e => e.month), ...data.incomes.map(i => i.month)])).sort((a, b) => a - b);
 
-                const monthLabels = months.map(month => monthNames[month - 1])
+                const monthLabels = months.map(month => monthNames[month - 1]);
                 const expensesData = months.map(month => expenseMap[month] || 0);
                 const incomesData = months.map(month => incomeMap[month] || 0);
 
@@ -64,7 +126,7 @@
                     {
                         type: 'bar',
                         data: {
-                            labels: monthLabels, 
+                            labels: monthLabels,
                             datasets: [
                                 {
                                     label: 'Expenses',
@@ -84,38 +146,12 @@
                         },
                         options: {
                             responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (tooltipItem) {
-                                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    stacked: true,
-                                    ticks: {
-                                        autoSkip: true,
-                                        maxTicksLimit: 12 
-                                    }
-                                },
-                                y: {
-                                    stacked: true,
-                                    beginAtZero: true
-                                }
-                            }
+                            maintainAspectRatio: false,
                         }
+                        
                     }
                 );
             },
-            error: function (xhr, status, error) {
-                console.error('AJAX call failed:', status, error);
-            }
         });
     });
 </script>

@@ -96,6 +96,45 @@ namespace Expendio.Controllers
             return Json(TotalData);
         }
 
+        public JsonResult ChartDataYearCategory()
+        {
+            int year = DateTime.Now.Year;
+
+            var idClaim = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+            var Id = Convert.ToInt32(idClaim);
+
+            var totalExpensesByCategory = _context.Expenses
+                .Where(p => p.UserId == Id)
+                .Where(p => p.Date.Year == year)
+                .GroupBy(p => p.Category)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    Total = g.Sum(p => p.Amount)
+                })
+                .ToList();
+
+            var totalIncomesBySource = _context.Incomes
+                .Where(p => p.UserId == Id)
+                .Where(p => p.Date.Year == year)
+                .GroupBy(p => p.Source) 
+                .Select(g => new
+                {
+                    Source = g.Key,
+                    Total = g.Sum(p => p.Amount)
+                })
+                .ToList();
+
+
+            var TotalData = new
+            {
+                Expenses = totalExpensesByCategory,
+                Incomes = totalIncomesBySource
+            };
+
+            return Json(TotalData);
+        }
+
         [Authorize]
         public IActionResult Add()
         {
