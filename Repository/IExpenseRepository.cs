@@ -10,5 +10,7 @@ namespace Expendio.Services
         Task<IList<Expense>> GetExpenseByMonth(int year, int month, int Id);
         Task<IList<Expense>> GetExpenseByYear(int year, int Id);
         Task<IList<Income>> GetIncomeByYear(int year, int Id);
+        Task AddIncome(Income income);
+        Task AddExpense(Expense expense);
     }
 }

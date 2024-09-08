@@ -47,5 +47,17 @@ namespace Expendio.Services
             var data = await _context.Incomes.Where(e => e.Date.Year == year && e.UserId == Id).ToListAsync();
             return data;
         }
+
+        public async Task AddIncome(Income income)
+        {
+            await _context.Incomes.AddAsync(income);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddExpense(Expense expense)
+        {
+            await _context.Expenses.AddAsync(expense);
+            await _context.SaveChangesAsync();
+        }
     }
 }

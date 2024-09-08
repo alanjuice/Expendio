@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Expendio.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly ExpendioDbContext _context;
@@ -47,11 +48,6 @@ namespace Expendio.Controllers
             };
 
             return View(viewModel);
-
-            //Current day expenses/incomes
-            //Current week/incomes
-            //Current month
-            //Current year
         }
 
         [Authorize]
@@ -161,8 +157,7 @@ namespace Expendio.Controllers
                 try
                 {
                     var incomeEntity = incomeDto.ToIncome(Id);
-                    await _context.Incomes.AddAsync(incomeEntity);
-                    await _context.SaveChangesAsync();
+                    await _expenseRepository.AddIncome(incomeEntity);
                     return RedirectToAction("Index", "User");
                 }
                 catch (Exception ex)
@@ -184,8 +179,7 @@ namespace Expendio.Controllers
                 try
                 {
                     var expenseEntity = expenseDto.ToExpense(Id);
-                    await _context.Expenses.AddAsync(expenseEntity);
-                    await _context.SaveChangesAsync();
+                    await _expenseRepository.AddExpense(expenseEntity);
                     return RedirectToAction("Index", "User");
                 }
                 catch (Exception ex)
