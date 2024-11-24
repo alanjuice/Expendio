@@ -1,5 +1,5 @@
 using Expendio.Data;
-using Expendio.Services;
+using Expendio.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
