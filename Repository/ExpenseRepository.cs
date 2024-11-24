@@ -2,7 +2,7 @@
 using Expendio.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Expendio.Services
+namespace Expendio.Repository
 {
     public class ExpenseRepository:IExpenseRepository
     {
@@ -45,6 +45,18 @@ namespace Expendio.Services
         public async Task<IList<Income>> GetIncomeByYear(int year, int Id)
         {
             var data = await _context.Incomes.Where(e => e.Date.Year == year && e.UserId == Id).ToListAsync();
+            return data;
+        }
+        
+        public async Task<IList<Expense>> GetExpenses()
+        {
+            var data = await _context.Expenses.ToListAsync();
+            return data;
+        }
+        
+        public async Task<IList<Income>> GetIncomes()
+        {
+            var data = await _context.Incomes.ToListAsync();
             return data;
         }
 
