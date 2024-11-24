@@ -12,9 +12,11 @@ namespace Expendio.Controllers
     public class AccountController : Controller
     {
         private readonly ExpendioDbContext _context;
-        public AccountController(ExpendioDbContext context)
+        private IPasswordHasher _hasher;
+        public AccountController(ExpendioDbContext context, IPasswordHasher hasher)
         {
             _context = context;
+            _hasher = hasher;
         }
 
         public IActionResult Login()
@@ -45,13 +47,14 @@ namespace Expendio.Controllers
             var user = signupUser.ToUser();
             try
             {
+                user.Password = _hasher.HashPassword(user.Password);
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Login", "Account");
             }
             catch (Exception)
             {
-                return NoContent();
+                return BadRequest("Error: Could not sign up user");
             }            
         }
 
@@ -69,7 +72,7 @@ namespace Expendio.Controllers
             {
                 return Unauthorized("User doesn't exist");
             }
-            if (loginUserDto.Password != user.Password)
+            if (!_hasher.VerifyHashedPassword(user.Password, loginUserDto.Password))
             {
                 return Unauthorized("Incorrect Password");
             }

@@ -6,10 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddLogging(builder=>builder.AddConsole());
+builder.Services.AddLogging(b=>b.AddConsole());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ExpendioDbContext>(options=>options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddAuthentication().AddCookie(options => {
     options.Cookie.Name = "AuthCookie";
