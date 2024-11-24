@@ -1,11 +1,14 @@
-﻿using Expendio.Data;
+﻿using System.Globalization;
+using System.IO.Compression;
+using Expendio.Data;
 using Expendio.DTO;
 using Expendio.Mappers;
-using Expendio.Services;
+using Expendio.Repository;
 using Expendio.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CsvHelper;
 
 namespace Expendio.Controllers
 {
@@ -136,6 +139,36 @@ namespace Expendio.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        public async Task<FileResult> ExportData()
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    var incomesFile = archive.CreateEntry("incomes.csv");
+                    using (var streamWriter = new StreamWriter(incomesFile.Open()))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        var incomes = await _expenseRepository.GetIncomes();
+                        csvWriter.WriteRecords(incomes);
+                    }
+                    
+                    var expensesFile = archive.CreateEntry("expenses.csv");
+                    using (var streamWriter = new StreamWriter(expensesFile.Open()))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                    {
+                        var expenses = await _expenseRepository.GetExpenses();
+                        csvWriter.WriteRecords(expenses); 
+                    }
+                }
+                
+                
+                return File(memoryStream.ToArray(), "application/zip", "Data.zip");
+            }
+        }
+
 
         [Authorize]
         public async Task<IActionResult> Logout()
